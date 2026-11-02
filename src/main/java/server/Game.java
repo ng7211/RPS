@@ -86,6 +86,10 @@ public class Game {
         return scores.get(players.get(position));
     }
 
+    /**
+     * Die Methode gibt den aktuellen Spielzustand zurück
+     * @return Der aktuelle Spielzustand
+     */
     public synchronized GameState snapshot() {
         List<Player> playersCopy = new ArrayList<>(players);
         List<RoundResult> historyCopy = new ArrayList<>(history);
@@ -93,6 +97,11 @@ public class Game {
                 historyCopy, pointsToWin, phase, winner, finishReason);
     }
 
+    /**
+     * Die Methode gibt den Gegner vom Player zurück
+     * @param player der aktuelle Spieler
+     * @return Der Gegner.
+     */
     public synchronized Player opponentOf(Player player) {
         if (players.size() != 2) throw new IllegalStateException();
         requireKnown(player);
@@ -103,6 +112,10 @@ public class Game {
         return players.get(indexOfOpponent);
     }
 
+    /**
+     * Prüfung ob, dass Spiel zu Ende ist
+     * @return True, wenn Spiel vorbei ist, false, wenn nicht.
+     */
     public synchronized boolean isFinished() {
         return phase == GamePhase.FINISHED;
     }
@@ -113,6 +126,10 @@ public class Game {
         }
     }
 
+    /**
+     * Diese Methode evaluiert die Züge der Spieler in der aktuellen Runde
+     * @return Resultat der Runde
+     */
     private RoundResult evaluateRound() {
         Player player1 = players.getFirst();
         Player player2 = players.getLast();
