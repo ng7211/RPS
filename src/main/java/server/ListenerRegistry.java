@@ -16,7 +16,7 @@ public class ListenerRegistry {
     /**
      * Spieler wird eingetragen
      * @param player der einzutragene Spieler
-     * @param gameListener Variable welche Spieler über Ereignisse informiert
+     * @param gameListener Listener, der die Rückrufe für diesen Endpunkt entgegennimmt
      */
     public void put(Player player, GameListener gameListener) {
         if (player == null || gameListener == null) throw new IllegalArgumentException("Player oder gamelistener ist null");
