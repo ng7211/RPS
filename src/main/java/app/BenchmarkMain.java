@@ -1,3 +1,4 @@
+// AI-GENERATED-START: Benchmark Zeitmessung - 01.11.2026
 package app;
 
 import common.*;
@@ -133,3 +134,4 @@ public final class BenchmarkMain {
         return sorted[sorted.length / 2];
     }
 }
+// AI-GENERATED-END
