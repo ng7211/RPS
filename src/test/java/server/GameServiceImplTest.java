@@ -2,6 +2,8 @@
 package server;
 
 import common.*;
+import common.NameTakenException;
+import common.UnknownPlayerException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

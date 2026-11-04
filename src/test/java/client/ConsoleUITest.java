@@ -2,6 +2,7 @@
 package client;
 
 import common.*;
+import common.GameFullException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

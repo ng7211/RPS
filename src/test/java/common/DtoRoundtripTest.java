@@ -15,9 +15,9 @@ class DtoRoundtripTest {
     private static final Player BOB = new Player(2, "bob");
 
     private static <T> T roundtrip(T original, Class<T> type) throws Exception {
-        String json = MAPPER.writeValueAsString(original);
+        String json = MAPPER.writeValueAsString(original); //Marshalling
         System.out.println(type.getSimpleName() + ": " + json);
-        return MAPPER.readValue(json, type);
+        return MAPPER.readValue(json, type); //Unmarshalling
     }
 
     @Test
@@ -111,6 +111,34 @@ class DtoRoundtripTest {
         assertEquals(original, roundtrip(original, GameState.class));
     }
 
+    @Test
+    void player_jsonHatErwarteteFelder() throws Exception {
+        com.fasterxml.jackson.databind.JsonNode node = MAPPER.readTree(MAPPER.writeValueAsString(ALICE));
+        assertEquals(2, node.size(), "Player soll genau zwei Felder haben");
+        assertEquals(1, node.get("id").asInt());
+        assertEquals("alice", node.get("name").asText());
+    }
+
+    @Test
+    void gameState_winnerNullWirdAlsNullUebertragen() throws Exception {
+        GameState original = new GameState(List.of(ALICE), 0, 0, 1, List.of(), 3,
+                GamePhase.WAITING, null, FinishReason.NONE);
+        com.fasterxml.jackson.databind.JsonNode node = MAPPER.readTree(MAPPER.writeValueAsString(original));
+        assertTrue(node.has("winner"), "Feld winner muss vorhanden sein");
+        assertTrue(node.get("winner").isNull());
+    }
+
+    @Test
+    void player_mitUmlaut_roundtrip() throws Exception {
+        Player original = new Player(3, "Jürgen Zoë");
+        assertEquals(original, roundtrip(original, Player.class));
+    }
+
+    @Test
+    void player_unbekanntesFeld_wirdAbgelehnt() {
+        String json = "{\"id\":1,\"name\":\"alice\",\"extra\":42}";
+        assertThrows(Exception.class, () -> MAPPER.readValue(json, Player.class));
+    }
 
 }
 
