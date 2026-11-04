@@ -1,4 +1,4 @@
-// AI-GENERATED-START: JUnit 5 Tests für ClassicRules (9 Varianten & Null-Check) - 01.11.2026
+// AI-GENERATED-START: JUnit 5 Tests für ClassicRules - 01.11.2026
 package server;
 import common.Move;
 import common.Outcome;
