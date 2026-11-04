@@ -22,7 +22,7 @@ import java.time.Duration;
 public final class ServerMain {
 
     private static final Duration TIMEOUT = Duration.ofSeconds(30);
-    private static final int DEFAULT_PORT = 5000;
+    private static final int DEFAULT_PORT = 5001;
 
     public static void main(String[] args) {
         int port = parsePort(args);
@@ -53,7 +53,7 @@ public final class ServerMain {
         }
     }
 
-    /** Port aus args[0], Standardwert 5000, ungueltige Zahl mit Meldung. */
+    /** Port aus args[0], Standardwert 5001, ungueltige Zahl mit Meldung. */
     private static int parsePort(String[] args) {
         if (args.length == 0) return DEFAULT_PORT;
         try {
