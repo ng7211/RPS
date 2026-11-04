@@ -1,7 +1,4 @@
-package server;
-
-import common.CallbackEndpoint;
-import common.GameListener;
+package common;
 
 public interface ListenerFactory {
     GameListener create(CallbackEndpoint callbackEndpoint);

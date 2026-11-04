@@ -2,6 +2,7 @@ package server;
 
 import common.CallbackEndpoint;
 import common.GameListener;
+import common.ListenerFactory;
 
 import java.util.concurrent.ConcurrentHashMap;
 

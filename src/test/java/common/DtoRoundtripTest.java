@@ -115,7 +115,7 @@ class DtoRoundtripTest {
     void player_jsonHatErwarteteFelder() throws Exception {
         com.fasterxml.jackson.databind.JsonNode node = MAPPER.readTree(MAPPER.writeValueAsString(ALICE));
         assertEquals(2, node.size(), "Player soll genau zwei Felder haben");
-        assertEquals(1, node.get("id").asInt());
+        assertEquals(1, node.get("ID").asInt());
         assertEquals("alice", node.get("name").asText());
     }
 
