@@ -14,28 +14,28 @@ import java.util.Map;
  */
 public final class GameListenerProxy implements GameListener {
 
-    private final Connection connection;
+    private final NotificationSender notificationSender;
 
-    public GameListenerProxy(Connection connection) {
-        if (connection == null) {
-            throw new IllegalArgumentException("Connection is null");
+    public GameListenerProxy(NotificationSender notificationSender) {
+        if (notificationSender == null) {
+            throw new IllegalArgumentException("NotificationSender is null");
         }
-        this.connection = connection;
+        this.notificationSender = notificationSender;
     }
 
     @Override
     public void onOpponentJoined(Player opponent) {
-        connection.sendNotification("onOpponentJoined", params("opponent", opponent));
+        notificationSender.sendNotification("onOpponentJoined", params("opponent", opponent));
     }
 
     @Override
     public void onRoundFinished(RoundResult result) {
-        connection.sendNotification("onRoundFinished", params("result", result));
+        notificationSender.sendNotification("onRoundFinished", params("result", result));
     }
 
     @Override
     public void onGameFinished(GameState state) {
-        connection.sendNotification("onGameFinished", params("state", state));
+        notificationSender.sendNotification("onGameFinished", params("state", state));
     }
 
     /**

@@ -8,6 +8,7 @@ import common.Outcome;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -168,5 +169,31 @@ class CodecTest {
         JsonRpcMessage decoded = codec.decode(json);
         Player back = codec.getParam(decoded.params(), "player", Player.class);
         assertEquals(p, back);
+    }
+
+    @Test
+    void testDecodeClockErfolgreich() {
+        String json = "{\"alice\":2,\"bob\":1}";
+        Map<String, Integer> clock = codec.decodeClock(json);
+
+        assertNotNull(clock);
+        assertEquals(2, clock.get("alice"));
+        assertEquals(1, clock.get("bob"));
+    }
+
+    @Test
+    void testDecodeClockNullOderLeerGibtNull() {
+        assertNull(codec.decodeClock(null));
+        assertNull(codec.decodeClock(""));
+        assertNull(codec.decodeClock("   "));
+    }
+
+    @Test
+    void testDecodeClockUngueltigesJsonWirftRpcException() {
+        String kaputtesJson = "Kein echtes JSON";
+
+        RpcException ex = assertThrows(RpcException.class, () -> codec.decodeClock(kaputtesJson));
+        assertEquals(RpcException.INVALID_REQUEST, ex.getCode(), "Muss INVALID_REQUEST (bzw. gemäss Implementation INVALID_REQUEST) werfen");
+        assertTrue(ex.getMessage().contains("Ungültige Vektoruhr"));
     }
 }

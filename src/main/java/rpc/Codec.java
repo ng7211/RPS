@@ -6,6 +6,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import java.util.Map;
+
 /**
  * Marshalling/Unmarshalling. Einzige Klasse mit Jackson-Details.
  *
@@ -186,5 +188,17 @@ public final class Codec {
     /** Baut ein leeres params-Objekt. Praktisch fuer die Stubs. */
     public ObjectNode newParams() {
         return mapper.createObjectNode();
+    }
+
+    /**
+     * Liest eine Vektoruhr aus ihrem JSON-Text. null/leer -> null.
+     */
+    public Map<String, Integer> decodeClock(String json) {
+        if (json == null || json.isBlank()) return null;
+        try {
+            return mapper.readValue(json, new com.fasterxml.jackson.core.type.TypeReference<Map<String, Integer>>() {});
+        } catch (Exception e) {
+            throw new RpcException(RpcException.INVALID_REQUEST, "Ungültige Vektoruhr: " + e.getMessage());
+        }
     }
 }
