@@ -14,23 +14,31 @@ public class VectorClock {
         CONCURRENT
     }
 
-    private final String ownerID;
+    private final String owner;
     private final Map<String, Integer> v = new TreeMap<>();
 
     /**
-     * Jeder Spieler kriegt eine Vektoruhr
-     * @param ownerID ID des Spielers
+     * Legt Uhr für einen Prozess an und setzt den Eintrag in die Map auf 0.
+     * @param owner Name des Spielers
      */
-    public VectorClock(String ownerID) {
-        if (ownerID == null || ownerID.isBlank()) throw new IllegalArgumentException("Owner ID is null or blank");
-        this.ownerID = ownerID;
-        v.put(ownerID, 0);
+    public VectorClock(String owner) {
+        if (owner == null || owner.isBlank()) throw new IllegalArgumentException("Owner ID is null or blank");
+        this.owner = owner;
+        v.put(owner, 0);
     }
 
+    /**
+     * Erhöht Eintrag um 1, vor jedem Senden oder lokalem Ereignis.
+     */
     public synchronized void tick() {
-        v.merge(ownerID, 1, Integer::sum);
+        v.merge(owner, 1, Integer::sum);
     }
 
+    /**
+     * Nimmt komponentenweise das Maximum und ruft dann tick() auf.
+     * Aufruf bei jedem Empfangen.
+     * @param received Einträge der Spieler mit den Vektoruhren
+     */
     public synchronized void merge(Map<String,Integer> received) {
         //Nachricht ohne VC zählt trotzdem als Empfangsereignis
         if (received == null) {
@@ -41,10 +49,20 @@ public class VectorClock {
         tick();
     }
 
+    /**
+     * Gibt eine Kopie der Map zurück.
+     * @return
+     */
     public synchronized Map<String, Integer> snapshot() {
         return new TreeMap<>(v);
     }
 
+    /**
+     * Vergleicht zwei Vektoruhren, um die kausale Reihenfolge zwischen zwei Zeitstempeln zu bestimmen.
+     * @param a
+     * @param b
+     * @return
+     */
     public static Order compare(Map<String, Integer> a, Map<String, Integer> b) {
         boolean aGreater = false;
         boolean aSmaller = false;
@@ -70,6 +88,6 @@ public class VectorClock {
     }
 
     public synchronized String toString() {
-        return ownerID + v;
+        return owner + v;
     }
 }

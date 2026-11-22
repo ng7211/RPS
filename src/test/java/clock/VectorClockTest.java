@@ -104,5 +104,22 @@ public class VectorClockTest {
         assertEquals(0, snapshotBefore.get("alice"), "Alter Snapshot darf sich nicht verändern");
         assertEquals(2, snapshotAfter.get("alice"), "Aktuelle Uhr hat sich weiterentwickelt");
     }
+
+    @Test
+    void testToStringFormat() {
+        VectorClock clock = new VectorClock("alice");
+
+        // 1. Initialer Zustand: ownerID + TreeMap.toString()
+        assertEquals("alice{alice=0}", clock.toString(), "Initiales Format von toString() stimmt nicht");
+
+        // 2. Nach einem tick()
+        clock.tick();
+        assertEquals("alice{alice=1}", clock.toString(), "Format nach tick() stimmt nicht");
+
+        // 3. Nach einem merge mit einem anderen Prozess ("bob")
+        // Durch merge steigt alice auf 2 und bob wird mit 3 hinzugefügt (TreeMap sortiert alphabetisch)
+        clock.merge(Map.of("bob", 3));
+        assertEquals("alice{alice=2, bob=3}", clock.toString(), "Format nach merge() stimmt nicht");
+    }
 }
 // AI-GENERATED-END
