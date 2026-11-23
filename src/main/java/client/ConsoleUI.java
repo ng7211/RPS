@@ -10,6 +10,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.function.Consumer;
+import java.util.function.LongConsumer;
 
 /**
  * Konsolen-Frontend für die lokale Version. Ein einziges Terminal bedient mehrere Spieler:
@@ -36,6 +37,12 @@ public class ConsoleUI {
     private final Consumer<String> output;
 
     /**
+     * Setzt die Verzoegerung der naechsten Nachricht (verteilter Betrieb, z.B.
+     * JmsConnection::setNextDelay). {@code null} im lokalen Betrieb: dann gibt es kein {@code delay}.
+     */
+    private final LongConsumer delayControl;
+
+    /**
      * Erzeugt die Konsolenoberfläche.
      *
      * @param clients Spielername zum Client. Die Namen werden in Kleinbuchstaben übernommen
@@ -47,6 +54,17 @@ public class ConsoleUI {
      *                                  Groß- und Kleinschreibung unterscheiden
      */
     public ConsoleUI(Map<String, GameClient> clients, BufferedReader input, Consumer<String> output) {
+        this(clients, input, output, null);
+    }
+
+    /**
+     * Wie oben, zusaetzlich mit Verzoegerungs-Steuerung fuer den Befehl
+     * {@code <name> delay <ms> <zug>} (Demo verzoegerte Nachrichten, Praktikum 2).
+     *
+     * @param delayControl setzt die Verzoegerung der naechsten Nachricht; darf {@code null} sein
+     */
+    public ConsoleUI(Map<String, GameClient> clients, BufferedReader input, Consumer<String> output,
+                     LongConsumer delayControl) {
         if (clients == null || input == null || output == null) {
             throw new IllegalArgumentException("Clients, input or output is null");
         }
@@ -65,6 +83,7 @@ public class ConsoleUI {
         }
         this.input = input;
         this.output = output;
+        this.delayControl = delayControl;
     }
 
     /**
@@ -76,7 +95,7 @@ public class ConsoleUI {
      * Die Methode wirft selbst nichts.
      */
     public void run() {
-        say("Rock Paper Scissors (local mode). Type 'help' for commands.");
+        say("Rock Paper Scissors" + (delayControl == null ? " (local mode)" : " (distributed mode)") + ". Type 'help' for commands.");
         printHelp();
 
         while (true) {
@@ -124,7 +143,7 @@ public class ConsoleUI {
             say("Usage: <name> <command>. Type 'help'.");
             return;
         }
-        if (parts.length > 2) {
+        if (parts.length > 2 && !parts[1].equalsIgnoreCase("delay")) {
             say("Too many arguments. Type 'help'.");
             return;
         }
@@ -145,6 +164,7 @@ public class ConsoleUI {
                 client.quit();
                 sayFor(name, "Left the game.");
             }
+            case "delay" -> playDelayed(client, name, parts);
             default -> {
                 Move move = parseMove(command);
                 if (move == null) {
@@ -154,6 +174,47 @@ public class ConsoleUI {
                 }
             }
         }
+    }
+
+    /**
+     * {@code <name> delay <ms> <zug>}: Der Broker stellt den Zug erst nach {@code ms} zu.
+     * Der Aufruf laeuft im Hintergrund, damit sofort der naechste Zug eingegeben werden kann
+     * (Demo Verzoegerungskompensation). Fehler werden hier ausgegeben, weil sie nicht in
+     * {@link #run()} ankommen.
+     */
+    private void playDelayed(GameClient client, String name, String[] parts) {
+        if (delayControl == null) {
+            sayFor(name, "delay is only available in distributed mode.");
+            return;
+        }
+        if (parts.length != 4) {
+            sayFor(name, "Usage: <name> delay <ms> <rock|paper|scissors>");
+            return;
+        }
+        long ms;
+        try {
+            ms = Long.parseLong(parts[2]);
+        } catch (NumberFormatException e) {
+            sayFor(name, "Invalid delay: " + parts[2]);
+            return;
+        }
+        Move move = parseMove(parts[3]);
+        if (move == null || ms < 0) {
+            sayFor(name, "Usage: <name> delay <ms> <rock|paper|scissors>");
+            return;
+        }
+
+        Thread t = new Thread(() -> {
+            try {
+                delayControl.accept(ms);   // gilt genau fuer die naechste Nachricht = diesen Zug
+                sayFor(name, "(delayed " + move + ") " + describeStatus(client.play(move)));
+            } catch (RuntimeException e) {
+                sayFor(name, "(delayed " + move + ") Error: " + e.getClass().getSimpleName() + ": " + e.getMessage());
+            }
+        }, "delayed-move-" + name);
+        t.setDaemon(true);
+        t.start();
+        sayFor(name, move + " sent with " + ms + " ms delay.");
     }
 
     /**
@@ -228,6 +289,7 @@ public class ConsoleUI {
                 "  <name> paper | p      play paper",
                 "  <name> scissors | s   play scissors",
                 "  <name> state          show the current game state",
+                "  <name> delay <ms> <move>  play with broker delay (distributed mode)",
                 "  <name> quit           leave the game",
                 "  help                  show this help",
                 "  exit                  close the program",

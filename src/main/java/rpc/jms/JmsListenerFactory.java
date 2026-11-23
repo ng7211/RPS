@@ -1,7 +1,5 @@
 package rpc.jms;
 
-// ===== KI-generiert (Claude), im KI-Log vermerken =====
-
 import common.CallbackEndpoint;
 import common.GameListener;
 import common.ListenerFactory;

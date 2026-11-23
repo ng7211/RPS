@@ -3,107 +3,85 @@ package app;
 import client.ConsoleUI;
 import client.GameClient;
 import client.GameListenerImpl;
+import clock.VectorClock;
 import common.CallbackEndpoint;
 import common.GameListener;
 import common.GameService;
 import common.Player;
 import rpc.Codec;
-import rpc.Connection;
 import rpc.GameListenerDispatcher;
 import rpc.GameServiceProxy;
+import rpc.jms.JmsConnection;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.Socket;
-import java.time.Duration;
 import java.util.Locale;
 import java.util.Map;
 
 /**
- * Startet einen Client gegen einen Server.
+ * Startet einen Client gegen den Server über den Message Broker.
  *
- * <p>Aufruf: java app.ClientMain &lt;host&gt; &lt;port&gt; &lt;name&gt; [id]
- * <p>Beispiel: java app.ClientMain 192.168.0.10 5000 alice
+ * <p>Aufruf: java app.ClientMain &lt;name&gt; [id] [brokerUrl]
+ * <p>Beispiel: java app.ClientMain alice 1 tcp://192.168.0.10:61616
  */
 public final class ClientMain {
 
-    private static final Duration TIMEOUT = Duration.ofSeconds(30);
+    private static final String DEFAULT_BROKER = "tcp://localhost:61616";
 
     public static void main(String[] args) {
-        // Schritt 1: Argumente pruefen
-        if (args.length < 3) {
-            System.err.println("Usage: ClientMain <host> <port> <name> [id]");
+        // Schritt 1: Argumente prüfen
+        if (args.length < 1) {
+            System.err.println("Usage: ClientMain <name> [id] [brokerUrl]");
             System.exit(1);
             return;
         }
-        String host = args[0];
+        String name = args[0];
+        String key = name.toLowerCase(Locale.ROOT);
 
-        int port;
-        try {
-            port = Integer.parseInt(args[1]);
-        } catch (NumberFormatException e) {
-            System.err.println("Invalid port: " + args[1]);
-            System.exit(1);
-            return;
-        }
-
-        String name = args[2];
-
-        int id;
-        if (args.length >= 4) {
+        int id = 1;
+        if (args.length >= 2) {
             try {
-                id = Integer.parseInt(args[3]);
+                id = Integer.parseInt(args[1]);
             } catch (NumberFormatException e) {
-                System.err.println("Invalid id: " + args[3]);
+                System.err.println("Invalid id: " + args[1]);
                 System.exit(1);
                 return;
             }
-        } else {
-            id = 1;
         }
+        String brokerUrl = args.length >= 3 ? args[2] : DEFAULT_BROKER;
 
-        // Schritt 2: Socket oeffnen (hier wird die Firewall sichtbar)
-        Socket socket;
+        // Schritt 2: Codec, Uhr und Verbindung zum Broker (hier wird die Firewall sichtbar)
+        Codec codec = new Codec();
+        VectorClock clock = new VectorClock(key);
+        JmsConnection connection;
         try {
-            socket = new Socket(host, port);
-        } catch (IOException e) {
-            System.err.println("Cannot reach server at " + host + ":" + port
-                    + " (" + e.getMessage() + ")");
+            connection = new JmsConnection(brokerUrl, key, clock, codec);
+        } catch (RuntimeException e) {
+            System.err.println("Cannot reach broker at " + brokerUrl + " (" + e.getMessage() + ")");
             System.exit(1);
             return;
         }
 
-        // Schritt 3: Codec und Connection
-        Codec codec = new Codec();
-        Connection connection;
-        try {
-            connection = new Connection(socket, codec, TIMEOUT);
-        } catch (IOException e) {
-            System.err.println("Cannot create connection: " + e.getMessage());
-            return;
-        }
-
-        // Schritt 4: Listener auf Client-Seite als Dispatcher eintragen, DANN starten
+        // Schritt 3: Listener auf Client-Seite als Dispatcher eintragen (VOR register)
         GameListener listener = new GameListenerImpl(name, System.out::println);
-        connection.setDispatcher(new GameListenerDispatcher(listener, codec));
-        connection.start();
+        connection.setNotificationDispatcher(new GameListenerDispatcher(listener, codec));
 
-        // Schritt 5: Proxy, Player, Platzhalter-Endpoint, GameClient
+        // Schritt 4: Proxy, Player, echter Endpoint = eigene Event-Queue, GameClient
         GameService service = new GameServiceProxy(connection);
         Player player = new Player(id, name);
-        // Platzhalter: Der Server baut aus der Connection einen echten Endpoint.
-        CallbackEndpoint placeholder = new CallbackEndpoint(host, port, "/unused");
-        GameClient gameClient = new GameClient(service, player, placeholder);
+        CallbackEndpoint endpoint = new CallbackEndpoint("jms", 0, "/queue/game.events." + key);
+        GameClient gameClient = new GameClient(service, player, endpoint);
 
-        // Schritt 6: ConsoleUI mit genau einem Eintrag (Name in Kleinbuchstaben)
+        // Schritt 5: ConsoleUI mit genau einem Eintrag
+        // Mit Verzoegerungs-Steuerung fuer die Demo (Befehl: <name> delay <ms> <zug>)
         ConsoleUI ui = new ConsoleUI(
-                Map.of(name.toLowerCase(Locale.ROOT), gameClient),
+                Map.of(key, gameClient),
                 new BufferedReader(new InputStreamReader(System.in)),
-                System.out::println);
+                System.out::println,
+                connection::setNextDelay);
         ui.run();
 
-        // Schritt 7: Aufraeumen
+        // Schritt 6: Aufräumen
         connection.close();
     }
 }

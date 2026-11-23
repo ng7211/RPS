@@ -14,13 +14,13 @@ import java.util.Map;
  */
 public final class GameServiceProxy implements GameService {
 
-    private final Connection connection;
+    private final RpcTransport transport;
 
-    public GameServiceProxy(Connection connection) {
-        if (connection == null) {
-            throw new IllegalArgumentException("Connection is null");
+    public GameServiceProxy(RpcTransport transport) {
+        if (transport == null) {
+            throw new IllegalArgumentException("Transport is null");
         }
-        this.connection = connection;
+        this.transport = transport;
     }
 
     @Override
@@ -58,7 +58,7 @@ public final class GameServiceProxy implements GameService {
      */
     private <T> T call(String method, Map<String, Object> params, Class<T> resultType) {
         try {
-            return connection.call(method, params, resultType);
+            return transport.call(method, params, resultType);
         } catch (RpcException e) {
             throw RpcException.toException(e.getCode(), e.getMessage());
         }

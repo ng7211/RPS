@@ -3,7 +3,7 @@ package rpc;
 import com.fasterxml.jackson.databind.JsonNode;
 
 /**
- * Nahtstelle zwischen Transport (Connection) und Fachlogik.
+ * Nahtstelle zwischen Transport (z.B. JmsConnection, JmsRpcServer) und Fachlogik.
  * Fachbegriff: Server-Stub (Skeleton).
  */
 public interface Dispatcher {

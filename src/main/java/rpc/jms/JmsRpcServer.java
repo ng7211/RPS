@@ -3,7 +3,6 @@ package rpc.jms;
 import clock.VectorClock;
 import com.fasterxml.jackson.databind.JsonNode;
 import common.ConnectionException;
-import common.GameListener;
 import jakarta.jms.*;
 import jakarta.jms.Connection;
 import org.apache.activemq.ActiveMQConnectionFactory;
@@ -17,8 +16,8 @@ import java.util.Map;
  */
 public final class JmsRpcServer {
 
-    public static final String REQUEST_QUEUE = "game.requests";
-    public static final String EVENT_QUEUE_PREFIX = "game.events.";
+    public static final String REQUEST_QUEUE = JmsConnection.REQUEST_QUEUE;
+    public static final String EVENT_QUEUE_PREFIX = JmsConnection.EVENT_QUEUE_PREFIX;
 
     private final String brokerUrl;
     private final Dispatcher dispatcher;
@@ -56,11 +55,6 @@ public final class JmsRpcServer {
         }
     }
 
-    /** Liefert den Client-Stub für die Callbacks eines Spielers (ersetzt die alte ListenerFactory). */
-    public GameListener listenerFor(String playerName) {
-        return new GameListenerProxy(new JmsNotificationTarget(notifier, EVENT_QUEUE_PREFIX + playerName));
-    }
-
     private void onRequest(Message msg) {
         try {
             String corrId = msg.getJMSCorrelationID();
@@ -87,7 +81,7 @@ public final class JmsRpcServer {
                         new JsonRpcMessage.RpcError(e.getCode(), e.getMessage()), request.id());
             } catch (RuntimeException e) {
                 response = new JsonRpcMessage(null, null, null,
-                        new JsonRpcMessage.RpcError(-32603, "Internal error: " + e.getMessage()), request.id());
+                        new JsonRpcMessage.RpcError(RpcException.INTERNAL_ERROR, "Internal error: " + e.getMessage()), request.id());
             }
 
             if (replyTo == null) {
