@@ -1,11 +1,11 @@
 // AI-GENERATED-START: JUnit 5 Tests für LocalListenerFactory - 02.11.2026
 package server;
 
-import common.CallbackEndpoint;
-import common.GameListener;
-import common.GameState;
-import common.Player;
-import common.RoundResult;
+import common.dtos.CallbackEndpoint;
+import common.interfaces.GameListener;
+import common.dtos.GameState;
+import common.dtos.Player;
+import common.dtos.RoundResult;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

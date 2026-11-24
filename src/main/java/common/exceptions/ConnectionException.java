@@ -1,4 +1,4 @@
-package common;
+package common.exceptions;
 
 /**
  * Meldet, dass der Transport gescheitert ist. Z.B. Verbindung weg/fehlgeschlagen. Failure Tranzparenz

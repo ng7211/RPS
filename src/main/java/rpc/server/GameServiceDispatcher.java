@@ -1,8 +1,14 @@
-package rpc;
+package rpc.server;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.NullNode;
-import common.*;
+import common.dtos.CallbackEndpoint;
+import common.dtos.Player;
+import common.enums.Move;
+import common.interfaces.GameService;
+import rpc.Codec;
+import rpc.Dispatcher;
+import rpc.RpcException;
 
 /**
  * Server-Skeleton für GameService. Liest einen Aufruf, ruft den echten Dienst

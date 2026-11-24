@@ -1,8 +1,14 @@
-package rpc;
+package rpc.client;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.NullNode;
-import common.*;
+import common.dtos.GameState;
+import common.dtos.Player;
+import common.dtos.RoundResult;
+import common.interfaces.GameListener;
+import rpc.Codec;
+import rpc.Dispatcher;
+import rpc.RpcException;
 
 /**
  * Client-Skeleton: nimmt Rückruf-Notifications vom Server entgegen und ruft

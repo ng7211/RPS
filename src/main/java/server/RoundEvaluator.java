@@ -1,7 +1,7 @@
 package server;
 
-import common.Move;
-import common.Outcome;
+import common.enums.Move;
+import common.enums.Outcome;
 
 public interface RoundEvaluator {
     Outcome evaluate(Move first, Move second);

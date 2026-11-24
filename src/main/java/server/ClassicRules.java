@@ -1,7 +1,7 @@
 package server;
 
-import common.Move;
-import common.Outcome;
+import common.enums.Move;
+import common.enums.Outcome;
 
 import java.util.*;
 

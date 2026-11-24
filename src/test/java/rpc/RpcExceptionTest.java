@@ -1,7 +1,7 @@
 // AI-GENERATED-START: JUnit 5 Tests für RpcException (Code & Exception Mapping) - 04.11.2026
 package rpc;
 
-import common.*;
+import common.exceptions.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;

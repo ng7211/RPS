@@ -1,7 +1,13 @@
 // AI-GENERATED-START: JUnit 5 Tests für GameListenerImpl - 03.11.2026
 package client;
 
-import common.*;
+import common.dtos.Player;
+import common.dtos.RoundResult;
+import common.enums.FinishReason;
+import common.enums.GamePhase;
+import common.dtos.GameState;
+import common.enums.Move;
+import common.enums.Outcome;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

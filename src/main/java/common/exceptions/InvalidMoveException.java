@@ -1,4 +1,4 @@
-package common;
+package common.exceptions;
 
 public class InvalidMoveException extends GameException {
     public InvalidMoveException(String message) {

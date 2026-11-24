@@ -1,9 +1,9 @@
 package rpc.jms;
 
-import common.CallbackEndpoint;
-import common.GameListener;
-import common.ListenerFactory;
-import rpc.GameListenerProxy;
+import common.dtos.CallbackEndpoint;
+import common.interfaces.GameListener;
+import common.interfaces.ListenerFactory;
+import rpc.server.GameListenerProxy;
 
 /**
  * Macht aus einem CallbackEndpoint einen GameListenerProxy, der über den Broker

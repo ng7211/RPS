@@ -1,9 +1,9 @@
 package server;
 
-import common.GameListener;
-import common.GameState;
-import common.Player;
-import common.RoundResult;
+import common.interfaces.GameListener;
+import common.dtos.GameState;
+import common.dtos.Player;
+import common.dtos.RoundResult;
 
 import java.util.Optional;
 import java.util.function.Consumer;

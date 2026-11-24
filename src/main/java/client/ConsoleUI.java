@@ -1,7 +1,11 @@
 // AI-GENERATED-START: ConsoleUI (Konsolen-Frontend, ein Terminal fuer mehrere Spieler), 03.11.2026
 package client;
 
-import common.*;
+import common.dtos.GameState;
+import common.dtos.Player;
+import common.enums.Move;
+import common.enums.MoveStatus;
+import common.exceptions.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;

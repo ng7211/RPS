@@ -1,4 +1,8 @@
-package common;
+package common.interfaces;
+
+import common.dtos.GameState;
+import common.dtos.Player;
+import common.dtos.RoundResult;
 
 public interface GameListener {
 

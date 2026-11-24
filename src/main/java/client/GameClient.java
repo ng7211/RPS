@@ -1,6 +1,11 @@
 package client;
 
-import common.*;
+import common.dtos.CallbackEndpoint;
+import common.dtos.GameState;
+import common.dtos.Player;
+import common.enums.Move;
+import common.enums.MoveStatus;
+import common.interfaces.GameService;
 
 //Thin-Client (Keine Logik)
 public class GameClient {

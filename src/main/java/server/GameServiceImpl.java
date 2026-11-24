@@ -1,8 +1,14 @@
 package server;
 
 import clock.VectorClock;
-import common.*;
-import common.UnknownPlayerException;
+import common.exceptions.UnknownPlayerException;
+import common.dtos.*;
+import common.enums.GamePhase;
+import common.enums.Move;
+import common.enums.MoveStatus;
+import common.interfaces.GameListener;
+import common.interfaces.GameService;
+import common.interfaces.ListenerFactory;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,6 +1,6 @@
 package rpc;
 
-import common.*;
+import common.exceptions.*;
 
 /**
  * Trägt Fehlercode mit Text durch den Aufrufweg und Fehlerabbildung: Exception zu Code und Code zu Exception.

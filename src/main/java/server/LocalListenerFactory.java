@@ -1,8 +1,8 @@
 package server;
 
-import common.CallbackEndpoint;
-import common.GameListener;
-import common.ListenerFactory;
+import common.dtos.CallbackEndpoint;
+import common.interfaces.GameListener;
+import common.interfaces.ListenerFactory;
 
 import java.util.concurrent.ConcurrentHashMap;
 

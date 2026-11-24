@@ -1,7 +1,7 @@
 // AI-GENERATED-START: JUnit 5 Tests für ClassicRules - 01.11.2026
 package server;
-import common.Move;
-import common.Outcome;
+import common.enums.Move;
+import common.enums.Outcome;
 import org.junit.jupiter.api.Test;
 
 

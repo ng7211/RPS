@@ -2,7 +2,7 @@ package app;
 
 import clock.VectorClock;
 import rpc.Codec;
-import rpc.GameServiceDispatcher;
+import rpc.server.GameServiceDispatcher;
 import rpc.jms.JmsConnection;
 import rpc.jms.JmsListenerFactory;
 import rpc.jms.JmsRpcServer;

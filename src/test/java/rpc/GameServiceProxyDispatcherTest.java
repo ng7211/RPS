@@ -1,9 +1,21 @@
 // AI-GENERATED-START: GameServiceProxyDispatcherTest auf Loopback umgestellt (Claude), 23.11.2026
 package rpc;
 
-import common.*;
+import common.dtos.CallbackEndpoint;
+import common.dtos.Player;
+import common.enums.FinishReason;
+import common.enums.GamePhase;
+import common.dtos.GameState;
+import common.enums.Move;
+import common.enums.MoveStatus;
+import common.exceptions.InvalidMoveException;
+import common.exceptions.NameTakenException;
+import common.exceptions.UnknownPlayerException;
+import common.interfaces.GameService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import rpc.client.GameServiceProxy;
+import rpc.server.GameServiceDispatcher;
 
 import java.util.List;
 

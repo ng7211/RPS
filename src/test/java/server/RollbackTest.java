@@ -1,7 +1,12 @@
 // AI-GENERATED-START: JUnit 5 Tests für Rollback- und Memento-Logik (RollbackTest) - 04.11.2026
 package server;
 
-import common.*;
+import common.dtos.*;
+import common.enums.Move;
+import common.enums.Outcome;
+import common.exceptions.AlreadyMovedException;
+import common.interfaces.GameListener;
+import common.interfaces.ListenerFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

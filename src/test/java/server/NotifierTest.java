@@ -1,7 +1,14 @@
 // AI-GENERATED-START: JUnit 5 Tests für Notifier (7 Erwartungen) - 02.11.2026
 package server;
 
-import common.*;
+import common.dtos.Player;
+import common.dtos.RoundResult;
+import common.enums.FinishReason;
+import common.enums.GamePhase;
+import common.dtos.GameState;
+import common.enums.Move;
+import common.enums.Outcome;
+import common.interfaces.GameListener;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

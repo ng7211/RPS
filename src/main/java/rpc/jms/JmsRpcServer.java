@@ -2,8 +2,8 @@ package rpc.jms;
 
 import clock.VectorClock;
 import com.fasterxml.jackson.databind.JsonNode;
-import common.CausalContext;
-import common.ConnectionException;
+import common.dtos.CausalContext;
+import common.exceptions.ConnectionException;
 import jakarta.jms.*;
 import jakarta.jms.Connection;
 import org.apache.activemq.ActiveMQConnectionFactory;

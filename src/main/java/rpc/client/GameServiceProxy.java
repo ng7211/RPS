@@ -1,6 +1,13 @@
-package rpc;
+package rpc.client;
 
-import common.*;
+import common.dtos.CallbackEndpoint;
+import common.dtos.GameState;
+import common.dtos.Player;
+import common.enums.Move;
+import common.enums.MoveStatus;
+import common.interfaces.GameService;
+import rpc.RpcException;
+import rpc.RpcTransport;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

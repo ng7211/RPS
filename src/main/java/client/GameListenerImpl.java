@@ -1,6 +1,11 @@
 package client;
 
-import common.*;
+import common.dtos.Player;
+import common.dtos.RoundResult;
+import common.enums.FinishReason;
+import common.dtos.GameState;
+import common.enums.Move;
+import common.interfaces.GameListener;
 
 import java.util.List;
 import java.util.function.Consumer;

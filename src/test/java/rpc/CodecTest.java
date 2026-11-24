@@ -1,10 +1,10 @@
 package rpc;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import common.Move;
-import common.Player;
-import common.RoundResult;
-import common.Outcome;
+import common.enums.Move;
+import common.dtos.Player;
+import common.dtos.RoundResult;
+import common.enums.Outcome;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

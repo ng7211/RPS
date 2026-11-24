@@ -1,4 +1,4 @@
-package common;
+package common.exceptions;
 
 public class GameException extends RuntimeException {
     public GameException(String message) {

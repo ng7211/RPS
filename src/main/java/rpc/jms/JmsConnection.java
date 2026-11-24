@@ -2,7 +2,7 @@ package rpc.jms;
 
 import clock.VectorClock;
 import com.fasterxml.jackson.databind.JsonNode;
-import common.ConnectionException;
+import common.exceptions.ConnectionException;
 import jakarta.jms.Connection;
 import jakarta.jms.JMSException;
 import jakarta.jms.Message;

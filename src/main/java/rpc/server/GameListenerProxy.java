@@ -1,6 +1,10 @@
-package rpc;
+package rpc.server;
 
-import common.*;
+import common.dtos.GameState;
+import common.dtos.Player;
+import common.dtos.RoundResult;
+import common.interfaces.GameListener;
+import rpc.NotificationSender;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

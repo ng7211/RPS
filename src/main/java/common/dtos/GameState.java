@@ -1,4 +1,7 @@
-package common;
+package common.dtos;
+
+import common.enums.FinishReason;
+import common.enums.GamePhase;
 
 import java.util.List;
 

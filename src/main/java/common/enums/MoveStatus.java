@@ -1,6 +1,6 @@
-package common;
+package common.enums;
 
-public enum RoundStatus {
+public enum MoveStatus {
     WAITING_FOR_OPPONENT,
     ROUND_COMPLETE
 }

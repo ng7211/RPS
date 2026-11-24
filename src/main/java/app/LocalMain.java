@@ -3,9 +3,9 @@ package app;
 import client.ConsoleUI;
 import client.GameClient;
 import client.GameListenerImpl;
-import common.CallbackEndpoint;
-import common.GameService;
-import common.Player;
+import common.dtos.CallbackEndpoint;
+import common.interfaces.GameService;
+import common.dtos.Player;
 import server.*;
 
 import java.io.BufferedReader;

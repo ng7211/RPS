@@ -1,9 +1,18 @@
 // AI-GENERATED-START: JUnit 5 Tests für GameServiceImpl (mit Record CallbackEndpoint) - 02.11.2026
 package server;
 
-import common.*;
-import common.NameTakenException;
-import common.UnknownPlayerException;
+import common.exceptions.NameTakenException;
+import common.exceptions.UnknownPlayerException;
+import common.dtos.CallbackEndpoint;
+import common.dtos.Player;
+import common.dtos.RoundResult;
+import common.enums.FinishReason;
+import common.enums.GamePhase;
+import common.dtos.GameState;
+import common.enums.Move;
+import common.enums.MoveStatus;
+import common.interfaces.GameListener;
+import common.interfaces.ListenerFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

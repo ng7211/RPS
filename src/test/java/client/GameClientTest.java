@@ -1,7 +1,14 @@
 // AI-GENERATED-START: JUnit 5 Tests für GameClient - 03.11.2026
 package client;
 
-import common.*;
+import common.dtos.CallbackEndpoint;
+import common.dtos.Player;
+import common.enums.FinishReason;
+import common.enums.GamePhase;
+import common.dtos.GameState;
+import common.enums.Move;
+import common.enums.MoveStatus;
+import common.interfaces.GameService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

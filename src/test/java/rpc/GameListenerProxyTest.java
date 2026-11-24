@@ -1,8 +1,17 @@
 // AI-GENERATED-START: GameListenerProxyTest ohne TCP (Claude), 23.11.2026
 package rpc;
 
-import common.*;
+import common.dtos.Player;
+import common.dtos.RoundResult;
+import common.enums.FinishReason;
+import common.enums.GamePhase;
+import common.dtos.GameState;
+import common.enums.Move;
+import common.enums.Outcome;
+import common.interfaces.GameListener;
 import org.junit.jupiter.api.Test;
+import rpc.client.GameListenerDispatcher;
+import rpc.server.GameListenerProxy;
 
 import java.util.ArrayList;
 import java.util.List;

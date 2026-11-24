@@ -1,7 +1,7 @@
 package server;
 
-import common.GameListener;
-import common.Player;
+import common.interfaces.GameListener;
+import common.dtos.Player;
 
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
