@@ -2,6 +2,7 @@ package rpc.jms;
 
 import clock.VectorClock;
 import com.fasterxml.jackson.databind.JsonNode;
+import common.CausalContext;
 import common.ConnectionException;
 import jakarta.jms.*;
 import jakarta.jms.Connection;
@@ -74,6 +75,7 @@ public final class JmsRpcServer {
             //2. Fachlogik über den Skeleton
             JsonRpcMessage response;
             try {
+                CausalContext.set(receivedVc); //Zeitstempel des Absenders für das Zurückspulen
                 JsonNode result = dispatcher.dispatch(request.method(), request.params());
                 response = new JsonRpcMessage(null, null, result, null, request.id());
             } catch (RpcException e) {
@@ -82,6 +84,8 @@ public final class JmsRpcServer {
             } catch (RuntimeException e) {
                 response = new JsonRpcMessage(null, null, null,
                         new JsonRpcMessage.RpcError(RpcException.INTERNAL_ERROR, "Internal error: " + e.getMessage()), request.id());
+            } finally {
+                CausalContext.clear();
             }
 
             if (replyTo == null) {

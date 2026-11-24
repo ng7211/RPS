@@ -169,4 +169,56 @@ public class Game {
         phase = GamePhase.FINISHED;
         pendingMoves.clear();
     }
+
+    /**
+     * Kompletten inneren Zustand des Spiels speichern
+     */
+    public static final class Memento {
+        private final List<Player> players;
+        private final Map<Player, Move> pendingMoves;
+        private final Map<Player, Integer> scores;
+        private final List<RoundResult> history;
+        private GamePhase phase;
+        private int currentRound;
+        private Player winner;
+        private FinishReason finishReason;
+
+        private Memento(Game g) {
+            players = new ArrayList<>(g.players);
+            pendingMoves = new HashMap<>(g.pendingMoves);
+            scores = new HashMap<>(g.scores);
+            history = new ArrayList<>(g.history);
+            phase = g.phase;
+            currentRound = g.currentRound;
+            winner = g.winner;
+            finishReason = g.finishReason;
+        }
+
+        public int currentRound() {
+            return currentRound;
+        }
+    }
+
+    public synchronized Memento save() {
+        return new Memento(this);
+    }
+
+    /**
+     * Setzt das Spiel auf einen frueher gemerkten Zustand zurueck.
+     */
+    public synchronized void restore(Memento m) {
+        if (m == null) throw new IllegalArgumentException("Memento is null");
+        players.clear();
+        players.addAll(m.players);
+        pendingMoves.clear();
+        pendingMoves.putAll(m.pendingMoves);
+        scores.clear();
+        scores.putAll(m.scores);
+        history.clear();
+        history.addAll(m.history);
+        phase = m.phase;
+        currentRound = m.currentRound;
+        winner = m.winner;
+        finishReason = m.finishReason;
+    }
 }
