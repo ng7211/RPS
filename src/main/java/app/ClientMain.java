@@ -29,7 +29,7 @@ public final class ClientMain {
     private static final String DEFAULT_BROKER = "tcp://localhost:61616";
 
     public static void main(String[] args) {
-        // Schritt 1: Argumente prüfen
+        //Argumente prüfen
         if (args.length < 1) {
             System.err.println("Usage: ClientMain <name> [id] [brokerUrl]");
             System.exit(1);
@@ -50,7 +50,7 @@ public final class ClientMain {
         }
         String brokerUrl = args.length >= 3 ? args[2] : DEFAULT_BROKER;
 
-        // Schritt 2: Codec, Uhr und Verbindung zum Broker (hier wird die Firewall sichtbar)
+        //Codec, Uhr und Verbindung zum Broker
         Codec codec = new Codec();
         VectorClock clock = new VectorClock(key);
         JmsConnection connection;
@@ -62,18 +62,18 @@ public final class ClientMain {
             return;
         }
 
-        // Schritt 3: Listener auf Client-Seite als Dispatcher eintragen (VOR register)
+        //Listener auf Client-Seite als Dispatcher eintragen (VOR register)
         GameListener listener = new GameListenerImpl(name, System.out::println);
         connection.setNotificationDispatcher(new GameListenerDispatcher(listener, codec));
 
-        // Schritt 4: Proxy, Player, echter Endpoint = eigene Event-Queue, GameClient
+        //Proxy, Player, echter Endpoint = eigene Event-Queue, GameClient
         GameService service = new GameServiceProxy(connection);
         Player player = new Player(id, name);
         CallbackEndpoint endpoint = new CallbackEndpoint("jms", 0, "/queue/game.events." + key);
         GameClient gameClient = new GameClient(service, player, endpoint);
 
-        // Schritt 5: ConsoleUI mit genau einem Eintrag
-        // Mit Verzoegerungs-Steuerung fuer die Demo (Befehl: <name> delay <ms> <zug>)
+        //ConsoleUI mit genau einem Eintrag
+        //Mit Verzoegerungs-Steuerung fuer die Demo (Befehl: <name> delay <ms> <zug>)
         ConsoleUI ui = new ConsoleUI(
                 Map.of(key, gameClient),
                 new BufferedReader(new InputStreamReader(System.in)),
@@ -81,7 +81,7 @@ public final class ClientMain {
                 connection::setNextDelay);
         ui.run();
 
-        // Schritt 6: Aufräumen
+        //Aufräumen
         connection.close();
     }
 }

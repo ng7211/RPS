@@ -21,12 +21,12 @@ public final class JmsRpcServer {
 
     private final String brokerUrl;
     private final Dispatcher dispatcher;
-    private final VectorClock clock;          // DIESELBE Instanz wie in der Notification-JmsConnection
+    private final VectorClock clock;          //Gleiche Instanz wie in der Notification JmsConnection
     private final Codec codec;
-    private final JmsConnection notifier;     // ownerId "server", für Notifications an die Clients
+    private final JmsConnection notifier;     //ownerId "server", für Notifications an die Clients
 
     private Connection connection;
-    private Session session;                  // gehört dem Listener-Thread
+    private Session session;                  //gehört dem Listener-Thread
     private MessageProducer replyProducer;
 
     public JmsRpcServer(String brokerUrl, Dispatcher dispatcher, VectorClock clock,
@@ -47,7 +47,7 @@ public final class JmsRpcServer {
             MessageConsumer consumer = session.createConsumer(session.createQueue(REQUEST_QUEUE));
             consumer.setMessageListener(this::onRequest);
 
-            connection.start();                // erst NACH dem Listener
+            connection.start(); //erst nach dem Listener
             System.out.println("[server] lauscht auf " + REQUEST_QUEUE);
         } catch (JMSException e) {
             stop();
@@ -61,7 +61,7 @@ public final class JmsRpcServer {
             Destination replyTo = msg.getJMSReplyTo();
             String sender = msg.getStringProperty("sender");
 
-            // 1. Empfang: merge
+            //1. Empfang: merge
             Map<String, Integer> receivedVc = codec.decodeClock(msg.getStringProperty("vc"));
             Map<String, Integer> before = clock.snapshot();
             clock.merge(receivedVc);
@@ -71,7 +71,7 @@ public final class JmsRpcServer {
             System.out.printf("[server] RECV %s von %s corr=%s VC vorher %s nachher %s%n",
                     request.method(), sender, corrId, before, afterRecv);
 
-            // 2. Fachlogik über den Skeleton
+            //2. Fachlogik über den Skeleton
             JsonRpcMessage response;
             try {
                 JsonNode result = dispatcher.dispatch(request.method(), request.params());
@@ -88,7 +88,7 @@ public final class JmsRpcServer {
                 return;                        // kein Antwortziel -> wie Notification behandeln
             }
 
-            // 3. + 4. Senden: tick, Antwort mit derselben Correlation-ID
+            //3. und 4. Senden: tick, Antwort mit derselben Correlation-ID
             clock.tick();
             Map<String, Integer> afterSend = clock.snapshot();
 

@@ -25,12 +25,20 @@ public class GameListenerImpl implements GameListener {
         say(text);
     }
 
+    /**
+     * Anzeige das Runde beendet ist
+     * @param roundResult Rundenresultat
+     */
     @Override
     public void onRoundFinished(RoundResult roundResult) {
         String text = "Round " + roundResult.roundNr() + ": " + roundResult.player1().name() + " plays " + roundResult.player1Move().name() + ", " + roundResult.player2().name() + " plays " + roundResult.player2Move().name() + ". " + describeOutcome(roundResult);
         say(text);
     }
 
+    /**
+     * Anzeige das Spiel beendet wurde
+     * @param gameState Spielzustand
+     */
     @Override
     public void onGameFinished(GameState gameState) {
         String winnerName = (gameState.winner() == null) ? "nobody" : gameState.winner().name();

@@ -10,7 +10,7 @@ import java.util.Map;
  * wandelt aber jeden Aufruf in eine JSON-RPC-Nachricht und zurück.
  *
  * Fehlerabbildung: RpcException des Servers wird ueber RpcException.toException
- * wieder in die passende Spiel-Exception verwandelt (Abnahmepunkt 7).
+ * wieder in die passende Spiel-Exception verwandelt.
  */
 public final class GameServiceProxy implements GameService {
 

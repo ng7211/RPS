@@ -29,7 +29,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * Transportschicht ueber den Message Broker (ersetzt die TCP-Connection aus Praktikum 1).
+ * Transportschicht ueber den Message Broker, ersetzt die TCP-Connection aus Praktikum 1.
  *
  * <p>Channels (Queues):
  * <ul>
@@ -51,7 +51,7 @@ public final class JmsConnection implements RpcTransport {
     public static final String REPLY_QUEUE_PREFIX = "game.reply.";
     public static final String EVENT_QUEUE_PREFIX = "game.events.";
 
-    /** Grosszuegig, damit eine verzoegerte Nachricht in der Demo kein Timeout ausloest. */
+    /** Damit eine verzoegerte Nachricht in der Demo kein Timeout ausloest. */
     private static final long CALL_TIMEOUT_MS = 30_000;
 
     private final String owner;
@@ -75,7 +75,7 @@ public final class JmsConnection implements RpcTransport {
     private volatile Dispatcher notificationDispatcher;
 
     /**
-     * Baut die Verbindung zum Broker auf und startet den Listener fuer Antworten.
+     * Baut die Verbindung zum Broker auf und startet den Listener für Antworten.
      *
      * @param brokerUrl z.B. {@code tcp://localhost:61616}
      * @param owner     Kennung dieses Prozesses, z.B. {@code alice} oder {@code server};
@@ -93,20 +93,26 @@ public final class JmsConnection implements RpcTransport {
 
         Connection c = null;
         try {
+            //1. Connection Factory
             c = new ActiveMQConnectionFactory(brokerUrl).createConnection();
+            //2. Connection
             this.connection = c;
 
+            //3. Sessions
             this.sendSession = c.createSession(false, Session.AUTO_ACKNOWLEDGE);
             this.receiveSession = c.createSession(false, Session.AUTO_ACKNOWLEDGE);
 
+            //4. Destination
             this.requestQueue = sendSession.createQueue(REQUEST_QUEUE);
             this.replyQueue = sendSession.createQueue(REPLY_QUEUE_PREFIX + owner);
             this.eventQueue = sendSession.createQueue(EVENT_QUEUE_PREFIX + owner);
 
-            // Ziel wird erst beim Senden angegeben -> ein Producer fuer alle Queues
+            //5. Message Producer
+            //Ziel wird erst beim Senden angegeben -> ein Producer fuer alle Queues
             this.producer = sendSession.createProducer(null);
 
-            // Listener fuer Antworten auf der EMPFANGS-Session, VOR connection.start()
+            //5. Message Producer
+            //Listener fuer Antworten auf der EMPFANGS-Session, VOR connection.start()
             MessageConsumer replyConsumer = receiveSession.createConsumer(replyQueue);
             replyConsumer.setMessageListener(this::onReply);
 
@@ -133,7 +139,7 @@ public final class JmsConnection implements RpcTransport {
         }
     }
 
-    // ------------------------------------------------------------------ Senden
+    //Senden
 
     /** Synchroner Aufruf: wartet auf die Antwort mit der passenden Correlation-ID. */
     @Override
@@ -142,9 +148,9 @@ public final class JmsConnection implements RpcTransport {
             return callAsync(method, params, resultType).get(CALL_TIMEOUT_MS, TimeUnit.MILLISECONDS);
         } catch (ExecutionException e) {
             Throwable cause = e.getCause();
-            if (cause instanceof RpcException rpc) throw rpc;              // Fehler-Antwort des Servers
-            if (cause instanceof ConnectionException ce) throw ce;         // z.B. close() waehrend des Wartens
-            if (cause instanceof RuntimeException re) throw re;            // z.B. Codec-Fehler beim Umwandeln
+            if (cause instanceof RpcException rpc) throw rpc;              //Fehler Antwort des Servers
+            if (cause instanceof ConnectionException ce) throw ce;         //z.B. close() während des Wartens
+            if (cause instanceof RuntimeException re) throw re;            //z.B. Codec Fehler beim Umwandeln
             throw new ConnectionException("Aufruf fehlgeschlagen: " + method, cause);
         } catch (TimeoutException e) {
             throw new ConnectionException("Timeout nach " + CALL_TIMEOUT_MS + " ms: " + method, e);
@@ -171,7 +177,7 @@ public final class JmsConnection implements RpcTransport {
         String corrId = String.valueOf(id);
 
         CompletableFuture<JsonNode> raw = new CompletableFuture<>();
-        pending.put(corrId, raw);                         // VOR dem Senden eintragen
+        pending.put(corrId, raw);
 
         try {
             JsonNode paramsNode = (params == null) ? null : codec.toNode(params);
@@ -253,7 +259,7 @@ public final class JmsConnection implements RpcTransport {
         }
     }
 
-    /** Verzoegert genau die naechste gesendete Nachricht um {@code millis} (Broker-Scheduler). */
+    /** Verzoegert genau die nächste gesendete Nachricht um {@code millis} (Broker-Scheduler). */
     public void setNextDelay(long millis) {
         if (millis < 0) {
             throw new IllegalArgumentException("delay must not be negative");
@@ -261,7 +267,7 @@ public final class JmsConnection implements RpcTransport {
         nextDelay.set(millis);
     }
 
-    // ------------------------------------------------------------------ Empfangen
+    //Empfangen
 
     /** Listener auf game.reply.&lt;owner&gt;: ordnet die Antwort ueber die Correlation-ID zu. */
     private void onReply(Message msg) {
@@ -313,13 +319,13 @@ public final class JmsConnection implements RpcTransport {
                 return;
             }
             d.dispatch(notification.method(), notification.params());
-            // keine Antwort: Notification hat keine id
+            //keine Antwort: Notification hat keine id
         } catch (Exception e) {
             System.err.printf("[%s] Fehler in onNotification: %s%n", owner, e);
         }
     }
 
-    // ------------------------------------------------------------------ Schliessen
+    //Schliessen
 
     /**
      * Schliesst genau einmal und beendet alle wartenden Aufrufe. Bewusst NICHT im sendLock.

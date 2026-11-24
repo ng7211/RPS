@@ -51,7 +51,6 @@ public class VectorClock {
 
     /**
      * Gibt eine Kopie der Map zurück.
-     * @return
      */
     public synchronized Map<String, Integer> snapshot() {
         return new TreeMap<>(v);
@@ -61,7 +60,7 @@ public class VectorClock {
      * Vergleicht zwei Vektoruhren, um die kausale Reihenfolge zwischen zwei Zeitstempeln zu bestimmen.
      * @param a
      * @param b
-     * @return
+     *
      */
     public static Order compare(Map<String, Integer> a, Map<String, Integer> b) {
         boolean aGreater = false;
